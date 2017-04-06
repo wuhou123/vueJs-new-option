@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<!-- 引入样式 -->
+		<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-default/index.css">
+	</head>
+
+	<body>
+		<script type="text/x-template" id="birdSilderTmp">
+			<div class="el-slider">
+				<div class="el-slider__runway" ref="slider">
+					<div class="el-slider__bar" :style="{width: currentPosition}"></div>
+					<div class="el-slider__button-wrapper" @mouseenter="onmouseenter" @mousedown="onDragStart" :style="{left: currentPosition}">
+						<div class="el-tooltip">
+							<div class="el-tooltip__rel">
+								<div class="el-slider__button">
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="el-tooltip__popper is-dark fade-in-linear-enter-to" v-show="tooltipShow" style="transform-origin: center top 0px;top: 9px;transform: translateX(-50%);" :style="{left: currentPosition}">
+						<span>{{value}}</span>
+						<div x-arrow="" class="popper__arrow" style="left: 10px;">
+						</div>
+					</div>
+				</div>
+			</div>
+		</script>
+
+		</script>
+		<style>
+			.el-row {
+				margin-bottom: 20px;
+			}
+			
+			.last-child {
+				margin-bottom: 0;
+			}
+			
+			.activex {
+				color: rgb(247, 186, 42)
+			}
+			
+			.activex:hover {
+				transform: scale(1.2, 1.2)
+			}
+			
+			.activex:before {
+				content: "\e621"
+			}
+			
+			.low>.activex {
+				color: rgb(232, 208, 151)
+			}
+			
+			.hight>.activex {
+				color: rgb(245, 174, 8)
+			}
+			/*.active1 {
+				color: rgb(153, 169, 191)
+				/*color:rgb(247, 186, 42)*/
+			/*} */
+			/*.active1:hover {
+				transform: scale(1.2, 1.2)
+			}
+			*/
+			/*.active1:before {
+				content: "\e621"
+			}*/
+			/**步骤条***/
+			
+			.line {
+				transition-delay: 100ms;
+				width: 50%
+			}
+			
+			.line2 {
+				transition-delay: 100ms;
+				width: 100%
+			}
+			/*****小例子的样式****/
+			
+			.example {
+				position: fixed;
+				top: 100px;
+				left: 80%;
+				width: 50px;
+				height: 50px;
+			}
+			
+			.dot:before {
+				content: ' ';
+				position: absolute;
+				z-index: 2;
+				left: 0;
+				top: 0;
+				width: 50px;
+				height: 50px;
+				background: url(./img/gear.png);
+				background-size: cover;
+				background-color: #ff4200;
+			}
+			
+			.dot:after {
+				content: ' ';
+				position: absolute;
+				z-index: 1;
+				width: 50px;
+				height: 50px;
+				background-color: #ff4200;
+				box-shadow: 0 0 10px rgba(0, 0, 0, .3) inset;
+				-webkit-animation-name: 'ripple';
+				/*动画属性名，也就是我们前面keyframes定义的动画名*/
+				-webkit-animation-duration: 1s;
+				/*动画持续时间*/
+				-webkit-animation-timing-function: ease;
+				/*动画频率，和transition-timing-function是一样的*/
+				-webkit-animation-delay: 0s;
+				/*动画延迟时间*/
+				-webkit-animation-iteration-count: infinite;
+				/*定义循环资料，infinite为无限次*/
+				-webkit-animation-direction: normal;
+				/*定义动画方式*/
+			}
+			
+			@keyframes ripple {
+				0% {
+					left: 25px;
+					top: 25px;
+					opcity: 75;
+					width: 0;
+					height: 0;
+				}
+				100% {
+					left: -25px;
+					top: -25px;
+					opacity: 0;
+					width: 100px;
+					height: 100px;
+				}
+			}
+			/*分页*/
+
+		</style>
+		<div id="app">
+			<div class="block" style="width:50%">
+				<span class="demonstration">默认</span>
+				<el-slider v-model="value3"></el-slider>
+				<bird-slider v-model="value2" @input="parentInput" @change="parentChange"></bird-slider>
+				<input type="range" />
+			</div>
+		</div>
+		<!--评分部分 elementui-->
+		<p>评分</p>
+		<template id="myComponent">
+			<div class="el-rate">
+				<span class="el-rate__item" style="cursor: pointer;" v-for="(item,index) in items">
+						<i class="el-rate__icon el-icon-star-off" :class="{activex:index<=setindex}" :title="item.title" v-on:click="save(index)" v-on:mouseenter="enter(index)" v-on:mouseout="out(index)">							
+						<!---->
+						{{item.text}}
+						</i>
+				</span>
+			</div>
+		</template>
+		<template id="myComponent1">
+			<div class="el-rate">
+				<span class="el-rate__item" style="cursor: pointer;" v-for="(item,index) in items" :class="{low:setindex<2,hight:setindex>2}">
+						<i class="el-rate__icon el-icon-star-on" :class="{activex:index<=setindex}" :title="item.title" v-on:click="save(index)" v-on:mouseenter="enter(index)" v-on:mouseout="out(index)" ref="index">							
+						<!---->
+						{{item.text}}
+						</i>
+				</span>
+			</div>
+		</template>
+		<template id="myComponent3">
+			<div id="test">
+				<div class="el-step is-horizontal" style="width: 100px;" v-for="(item,index) in onesteps">
+					<div class="el-step__head is-text" v-bind:class="{'is-wait':process1<index,'is-success':process1>index,'is-process':process1 ==index}">
+						<div class="el-step__line" v-bind:class="{'is-horizontal':index<2}">
+							<i class="el-step__line-inner" v-bind:class="{line:process2<=index,line2:process2>index}"></i>
+						</div>
+						<span class="el-step__icon">
+						<i v-bind:class="{'el-icon-check':process1>index}"></i>	
+							<div>{{item.name}}</div>
+						</span>
+					</div>
+					<div class="el-step__main" style="margin-left: 0px;">
+						<div class="el-step__title" v-bind:class="{'is-wait':process1<index,'is-success':process1>index,'is-process':process1 ==index}">{{item.text}}</div>
+						<div class="el-step__description is-process"></div>
+					</div>
+				</div>
+				<div>
+					<button type="button" class="el-button el-button--default" style="margin-top: 12px;" v-on:click="add">				
+				<span>下一步</span>
+			</button>
+				</div>
+			</div>
+
+		</template>
+		<template id="myComponentpaging">
+			<div class="el-pagination">
+				<button type="button" class="btn-prev" style="margin-right:-4px" v-on:click="pre" v-bind:class="{disabled:button_index==0}">
+				<i class="el-icon el-icon-arrow-left"></i>
+			</button>
+				<ul class="el-pager">
+					<li class="number" v-for="(page,index) in pages" v-bind:class="{active:index==getindex}" v-on:click="set(index)">{{page.text}}</li>
+				</ul>
+				<button type="button" class="btn-next" style="margin-left:-4px" v-on:click="next" v-bind:class="{disabled:button_index==4}">
+				<i class="el-icon el-icon-arrow-right"></i>
+			</button>
+			</div>
+		</template>		
+		<div id="grade">
+			<div class="block">
+				<span class="demonstration">默认不区分颜色</span>
+				<el-rate v-model="value1"></el-rate>
+			</div>
+			<div class="block">
+				<span class="demonstration">区分颜色</span>
+				<el-rate v-model="value2" :colors="['#99A9BF', '#F7BA2A', '#FF9900']">
+				</el-rate>
+			</div>
+			<p>评分2</p>
+			<div id="grade2">
+				<div class="block">
+					<my-component></my-component>
+				</div>
+			</div>
+			<p>评分3-改颜色</p>
+			<div id="grade2">
+				<div class="block">
+					<my-component1></my-component1>
+				</div>
+			</div>
+			<p>步骤条组件-默认</p>
+			<el-steps :space="100" :active="active" finish-status="success">
+				<el-step title="步骤 1"></el-step>
+				<el-step title="步骤 2"></el-step>
+				<el-step title="步骤 3"></el-step>
+			</el-steps>
+			<el-button style="margin-top: 12px;" @click="next">下一步</el-button>
+			<p>步骤条组件</p>
+			<div id="step">
+				<my-component3 v-on:child="handit"></my-component3>
+			</div>
+		</div>
+		<p>小例子</p>
+		<div class="example">
+			<div class="dot"></div>
+		</div>
+		<p>分页-默认</p>
+		<div id="paging">
+			<div class="block">
+				<span class="demonstration">页数较少时的效果</span>
+				<el-pagination layout="prev, pager, next" :total="50">
+				</el-pagination>
+			</div>
+			<div class="block">
+				<span class="demonstration">大于 7 页时的效果</span>
+				<el-pagination layout="prev, pager, next" :total="1000">
+				</el-pagination>
+			</div>
+		</div>
+		<p>分页组件</p>
+    <div id="paging_w">
+    	<my-componentpaging v-on:child_click="accept"></my-componentpaging>
+    </div>
+	</body>
+	<!-- 先引入 Vue -- <script src="https://unpkg.com/vue/dist/vue.js"></script> -->
+	<script src="./js/lib/vue_2.js"></script>
+	<!-- 引入组件库 <script src="https://unpkg.com/element-ui/lib/index.js"></script>-->
+	<script src="./js/lib/element.js"></script>
+	<script src="./hello.js"></script>
+
+</html>

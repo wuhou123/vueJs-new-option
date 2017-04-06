@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<!-- 引入样式 -->
+		<link rel="stylesheet" href="../css/element.css">
+	</head>
+
+	<body>
+		<div id="app">
+			<div style="height:250px">
+				<template>
+					<el-table height="250" :data="tableData3" border style="width: 100%">
+						<el-table-column prop="date" label="日期" width="180">
+						</el-table-column>
+						<el-table-column prop="name" label="姓名" width="180">
+						</el-table-column>
+						<el-table-column prop="address" label="地址">
+						</el-table-column>
+					</el-table>
+				</template>
+			</div>
+			<div>
+				<template>
+					<el-table :data="tableData" border style="width: 100%">
+						<el-table-column fixed prop="date" label="日期" width="150">
+						</el-table-column>
+						<el-table-column prop="name" label="姓名" width="120">
+						</el-table-column>
+						<el-table-column prop="province" label="省份" width="120">
+						</el-table-column>
+						<el-table-column prop="city" label="市区" width="120">
+						</el-table-column>
+						<el-table-column prop="address" label="地址" width="300">
+						</el-table-column>
+						<el-table-column fixed="left" prop="zip" label="邮编" width="120">
+						</el-table-column>
+						<el-table-column fixed="right" label="操作" width="150">
+							<template scope="scope">
+								<el-button @click="handleClick" type="text" size="small">查看</el-button>
+								<el-button type="text" size="small">编辑</el-button>
+							</template>
+						</el-table-column>
+					</el-table>
+				</template>
+			</div>
+		</div>
+	</body>
+	<!-- 先引入 Vue -- <script src="https://unpkg.com/vue/dist/vue.js"></script> -->
+	<script src="../js/lib/vue_2.js"></script>
+	<!-- 引入组件库 <script src="https://unpkg.com/element-ui/lib/index.js"></script>-->
+	<script src="../js/lib/element.js"></script>
+	<script src="./table.js"></script>
+
+</html>
